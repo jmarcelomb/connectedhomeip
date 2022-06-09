@@ -539,9 +539,16 @@ CHIP_ERROR InteractionModelEngine::OnMessageReceived(Messaging::ExchangeContext 
     {
         OnTimedRequest(apExchangeContext, aPayloadHeader, std::move(aPayload), status);
     }
+    else if (aPayloadHeader.HasMessageType(MsgType::StatusResponse))
+    {
+        ChipLogProgress(InteractionModel, "Msg type %d not supported", aPayloadHeader.GetMessageType());
+        status = Status::InvalidAction;
+        return CHIP_ERROR_INVALID_MESSAGE_TYPE;
+    }
     else
     {
         ChipLogProgress(InteractionModel, "Msg type %d not supported", aPayloadHeader.GetMessageType());
+        status = Protocols::InteractionModel::Status::InvalidAction;
     }
 
     if (status != Protocols::InteractionModel::Status::Success && !apExchangeContext->IsGroupExchangeContext())
